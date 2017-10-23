@@ -3,7 +3,7 @@ namespace Web.Models
 {
     public class Item
     {
-        public int ItemID { get; set; }
+        public string ItemID { get; set; }
 
         public int Nome { get; set; }
 

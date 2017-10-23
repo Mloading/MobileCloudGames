@@ -11,107 +11,113 @@ using Web.Models.Contexto;
 
 namespace Web.Controllers
 {
-    public class TipoItemsController : Controller
+    public class ItemsController : Controller
     {
         private MeuContexto db = new MeuContexto();
 
-        // GET: TipoItems
+        // GET: Items
         public ActionResult Index()
         {
-            return View(db.TipoItems.ToList());
+            var items = db.Items.Include(i => i._TipoItem);
+            return View(items.ToList());
         }
 
-        // GET: TipoItems/Details/5
-        public ActionResult Details(int? id)
+        // GET: Items/Details/5
+        public ActionResult Details(string id)
         {
+
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            TipoItem tipoItem = db.TipoItems.Find(id);
-            if (tipoItem == null)
+            Item item = db.Items.Find(id);
+            if (item == null)
             {
                 return HttpNotFound();
             }
-            return View(tipoItem);
+            return View(item);
         }
 
-        // GET: TipoItems/Create
+        // GET: Items/Create
         public ActionResult Create()
         {
+            ViewBag.TipoItemID = new SelectList(db.TipoItems, "TipoItemID", "Nome");
             return View();
         }
 
-        // POST: TipoItems/Create
+        // POST: Items/Create
         // Para se proteger de mais ataques, ative as propriedades específicas a que você quer se conectar. Para 
         // obter mais detalhes, consulte https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "TipoItemID,Nome")] TipoItem tipoItem)
+        public ActionResult Create([Bind(Include = "ItemID,Nome,Descricao,Raridade,DanoMaximo,TipoItemID")] Item item)
         {
             if (ModelState.IsValid)
             {
-                db.TipoItems.Add(tipoItem);
+                db.Items.Add(item);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(tipoItem);
+            ViewBag.TipoItemID = new SelectList(db.TipoItems, "TipoItemID", "Nome", item.TipoItemID);
+            return View(item);
         }
 
-        // GET: TipoItems/Edit/5
-        public ActionResult Edit(int? id)
+        // GET: Items/Edit/5
+        public ActionResult Edit(string id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            TipoItem tipoItem = db.TipoItems.Find(id);
-            if (tipoItem == null)
+            Item item = db.Items.Find(id);
+            if (item == null)
             {
                 return HttpNotFound();
             }
-            return View(tipoItem);
+            ViewBag.TipoItemID = new SelectList(db.TipoItems, "TipoItemID", "Nome", item.TipoItemID);
+            return View(item);
         }
 
-        // POST: TipoItems/Edit/5
+        // POST: Items/Edit/5
         // Para se proteger de mais ataques, ative as propriedades específicas a que você quer se conectar. Para 
         // obter mais detalhes, consulte https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "TipoItemID,Nome")] TipoItem tipoItem)
+        public ActionResult Edit([Bind(Include = "ItemID,Nome,Descricao,Raridade,DanoMaximo,TipoItemID")] Item item)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(tipoItem).State = EntityState.Modified;
+                db.Entry(item).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(tipoItem);
+            ViewBag.TipoItemID = new SelectList(db.TipoItems, "TipoItemID", "Nome", item.TipoItemID);
+            return View(item);
         }
 
-        // GET: TipoItems/Delete/5
-        public ActionResult Delete(int? id)
+        // GET: Items/Delete/5
+        public ActionResult Delete(string id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            TipoItem tipoItem = db.TipoItems.Find(id);
-            if (tipoItem == null)
+            Item item = db.Items.Find(id);
+            if (item == null)
             {
                 return HttpNotFound();
             }
-            return View(tipoItem);
+            return View(item);
         }
 
-        // POST: TipoItems/Delete/5
+        // POST: Items/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public ActionResult DeleteConfirmed(string id)
         {
-            TipoItem tipoItem = db.TipoItems.Find(id);
-            db.TipoItems.Remove(tipoItem);
+            Item item = db.Items.Find(id);
+            db.Items.Remove(item);
             db.SaveChanges();
             return RedirectToAction("Index");
         }
